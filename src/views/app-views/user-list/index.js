@@ -103,7 +103,7 @@ export class UserList extends Component {
                 className="mr-2"
                 icon={<EditOutlined />}
                 onClick={() => {
-                  this.props.history.push("/app/clients/list/edit");
+                  this.props.history.push(`/app/clients/list/edit/${elm.id}`);
                 }}
                 size="small"
               />

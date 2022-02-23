@@ -16,26 +16,14 @@ import Flex from "components/shared-components/Flex";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { getUsers } from "redux/actions";
+import Loading from "components/shared-components/Loading";
 
 export class EditProfile extends Component {
   avatarEndpoint = "https://www.mocky.io/v2/5cc8019d300000980a055e76";
 
-  users = this.props.users;
-
-  state = {
-    id: this.users?.id || "",
-    name: this.users?.name || "",
-    username: this.users?.username || "",
-    email: this.users?.email || "",
-    address: this.users?.address || "",
-    phone: this.users?.phone || "",
-    website: this.users?.website || "",
-    company: this.users?.company || "",
-    img: this.users.img || "",
-  };
-
   componentDidMount() {
-    if (this.length === 0) {
+    const { getUsers } = this.props;
+    if (this.props.users.length === 0) {
       getUsers();
     }
   }
@@ -47,6 +35,8 @@ export class EditProfile extends Component {
   }
 
   render() {
+    const { isLoading } = this.props;
+
     const onFinish = (values) => {
       const key = "updatable";
       message.loading({ content: "Updating...", key });
@@ -54,7 +44,7 @@ export class EditProfile extends Component {
         this.setState({ ...this.state, values });
         message.success({ content: "Done!", key, duration: 2 });
         this.props.history.goBack();
-      }, 1000);
+      }, 2000);
     };
 
     const onFinishFailed = (errorInfo) => {
@@ -83,9 +73,11 @@ export class EditProfile extends Component {
       });
     };
 
-    const { name, username, email, company, phone, website, address, img } =
-      this.state;
+    const user = this.props.users[this.props.match.params.id - 1];
 
+    if (isLoading) {
+      return <Loading />;
+    }
     return (
       <Card bodyStyle={{ padding: "5" }}>
         <Flex
@@ -93,7 +85,11 @@ export class EditProfile extends Component {
           mobileFlex={false}
           className="text-center text-md-left"
         >
-          <Avatar size={90} src={img} icon={<UserOutlined />} />
+          <Avatar
+            size={90}
+            src={user.img || "/img/avatars/thumb-1.jpg"}
+            icon={<UserOutlined />}
+          />
           <div className="ml-md-3 mt-md-0 mt-3">
             <Upload
               onChange={onUploadAvatar}
@@ -112,14 +108,14 @@ export class EditProfile extends Component {
             name="basicInformation"
             layout="vertical"
             initialValues={{
-              name,
-              username,
-              email,
-              company: company.name,
-              phone,
-              website,
-              city: address.city,
-              street: address.street,
+              name: user?.name || "",
+              username: user?.username || "",
+              email: user?.email || "",
+              company: user?.company.name || "",
+              phone: user?.phone || "",
+              website: user?.website || "",
+              city: user?.address.city || "",
+              street: user?.address.street || "",
             }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
@@ -209,7 +205,7 @@ export class EditProfile extends Component {
 }
 
 const mapStateToProps = ({ users }) => {
-  return { users };
+  return { users: users.list, isLoading: users.isLoading };
 };
 
 const mapDispatchToProps = {
