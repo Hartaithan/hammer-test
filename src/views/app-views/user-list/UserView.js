@@ -19,13 +19,7 @@ export class UserView extends Component {
         visible={visible}
       >
         <div className="text-center mt-3">
-          <Avatar
-            size={80}
-            src={
-              data?.img ||
-              `/img/avatars/thumb-${Math.floor(Math.random() * 15) + 1}.jpg`
-            }
-          />
+          <Avatar size={80} src={data?.img || `/img/avatars/thumb-1.jpg`} />
           <h3 className="mt-2 mb-0">{data?.name}</h3>
         </div>
         <Divider dashed />

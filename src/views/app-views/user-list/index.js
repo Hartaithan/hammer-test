@@ -1,10 +1,13 @@
 import React, { Component } from "react";
 import { Card, Table, Tooltip, message, Button } from "antd";
-import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
+import { EyeOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import Loading from "components/shared-components/Loading";
 import UserView from "./UserView";
 import AvatarStatus from "components/shared-components/AvatarStatus";
 import axios from "axios";
+import { Link } from "react-router-dom";
+import { setUser } from "redux/actions/User";
+import { connect } from "react-redux";
 
 export class UserList extends Component {
   state = {
@@ -18,6 +21,9 @@ export class UserList extends Component {
     axios
       .get("https://jsonplaceholder.typicode.com/users")
       .then(({ data }) => {
+        data.forEach((item, index) => {
+          item.img = `/img/avatars/thumb-${index + 1}.jpg`;
+        });
         this.setState({
           users: data,
           isLoading: false,
@@ -55,6 +61,8 @@ export class UserList extends Component {
   render() {
     const { users, userProfileVisible, selectedUser } = this.state;
 
+    const { setUser } = this.props;
+
     const tableColumns = [
       {
         title: "Пользователь",
@@ -62,7 +70,7 @@ export class UserList extends Component {
         render: (_, record) => (
           <div className="d-flex">
             <AvatarStatus
-              src={record.img}
+              src={record.img || `/img/avatars/thumb-1.jpg`}
               name={record.name}
               subTitle={record.email}
             />
@@ -115,7 +123,18 @@ export class UserList extends Component {
         dataIndex: "actions",
         render: (_, elm) => (
           <div className="text-right">
-            <Tooltip title="View">
+            <Tooltip title="Редактировать">
+              <Link to={"/app/clients/list/edit"}>
+                <Button
+                  type="primary"
+                  className="mr-2"
+                  icon={<EditOutlined />}
+                  onClick={() => setUser(elm)}
+                  size="small"
+                />
+              </Link>
+            </Tooltip>
+            <Tooltip title="Просмотреть">
               <Button
                 type="primary"
                 className="mr-2"
@@ -126,7 +145,7 @@ export class UserList extends Component {
                 size="small"
               />
             </Tooltip>
-            <Tooltip title="Delete">
+            <Tooltip title="Удалить">
               <Button
                 danger
                 icon={<DeleteOutlined />}
@@ -158,4 +177,8 @@ export class UserList extends Component {
   }
 }
 
-export default UserList;
+const mapDispatchToProps = {
+  setUser,
+};
+
+export default connect(null, mapDispatchToProps)(UserList);
