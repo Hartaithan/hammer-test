@@ -5,7 +5,7 @@ import Loading from "components/shared-components/Loading";
 import UserView from "./UserView";
 import AvatarStatus from "components/shared-components/AvatarStatus";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import { setUser } from "redux/actions/User";
 import { connect } from "react-redux";
 
@@ -124,15 +124,16 @@ export class UserList extends Component {
         render: (_, elm) => (
           <div className="text-right">
             <Tooltip title="Редактировать">
-              <Link to={"/app/clients/list/edit"}>
-                <Button
-                  type="primary"
-                  className="mr-2"
-                  icon={<EditOutlined />}
-                  onClick={() => setUser(elm)}
-                  size="small"
-                />
-              </Link>
+              <Button
+                type="primary"
+                className="mr-2"
+                icon={<EditOutlined />}
+                onClick={() => {
+                  this.props.history.push("/app/clients/list/edit");
+                  setUser(elm);
+                }}
+                size="small"
+              />
             </Tooltip>
             <Tooltip title="Просмотреть">
               <Button
@@ -181,4 +182,4 @@ const mapDispatchToProps = {
   setUser,
 };
 
-export default connect(null, mapDispatchToProps)(UserList);
+export default connect(null, mapDispatchToProps)(withRouter(UserList));

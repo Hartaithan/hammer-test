@@ -4,7 +4,6 @@ import {
   Avatar,
   Button,
   Input,
-  DatePicker,
   Row,
   Col,
   message,
@@ -15,6 +14,7 @@ import { UserOutlined } from "@ant-design/icons";
 import { ROW_GUTTER } from "constants/ThemeConstant";
 import Flex from "components/shared-components/Flex";
 import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
 export class EditProfile extends Component {
   avatarEndpoint = "https://www.mocky.io/v2/5cc8019d300000980a055e76";
@@ -30,6 +30,7 @@ export class EditProfile extends Component {
     phone: this.user?.phone || "",
     website: this.user?.website || "",
     company: this.user?.company || "",
+    img: this.user.img || "",
   };
 
   getBase64(img, callback) {
@@ -39,33 +40,21 @@ export class EditProfile extends Component {
   }
 
   render() {
-    console.log(this.props);
-    console.log(this.state);
-
     const onFinish = (values) => {
       const key = "updatable";
       message.loading({ content: "Updating...", key });
       setTimeout(() => {
-        this.setState({
-          name: values.name,
-          email: values.email,
-          userName: values.userName,
-          dateOfBirth: values.dateOfBirth,
-          phoneNumber: values.phoneNumber,
-          website: values.website,
-          address: values.address,
-          city: values.city,
-          postcode: values.postcode,
-        });
+        this.setState({ ...this.state, values });
         message.success({ content: "Done!", key, duration: 2 });
+        this.props.history.goBack();
       }, 1000);
     };
 
     const onFinishFailed = (errorInfo) => {
-      console.log("Failed:", errorInfo);
+      console.error("Failed:", errorInfo);
     };
 
-    const onUploadAavater = (info) => {
+    const onUploadAvatar = (info) => {
       const key = "updatable";
       if (info.file.status === "uploading") {
         message.loading({ content: "Uploading...", key, duration: 1000 });
@@ -87,18 +76,8 @@ export class EditProfile extends Component {
       });
     };
 
-    const {
-      name,
-      email,
-      userName,
-      dateOfBirth,
-      phoneNumber,
-      website,
-      address,
-      city,
-      postcode,
-      avatarUrl,
-    } = this.state;
+    const { name, username, email, company, phone, website, address, img } =
+      this.state;
 
     return (
       <Card bodyStyle={{ padding: "5" }}>
@@ -107,17 +86,17 @@ export class EditProfile extends Component {
           mobileFlex={false}
           className="text-center text-md-left"
         >
-          <Avatar size={90} src={avatarUrl} icon={<UserOutlined />} />
+          <Avatar size={90} src={img} icon={<UserOutlined />} />
           <div className="ml-md-3 mt-md-0 mt-3">
             <Upload
-              onChange={onUploadAavater}
+              onChange={onUploadAvatar}
               showUploadList={false}
               action={this.avatarEndpoint}
             >
-              <Button type="primary">Change Avatar</Button>
+              <Button type="primary">Изменить аватар</Button>
             </Upload>
             <Button className="ml-2" onClick={onRemoveAvater}>
-              Remove
+              Удалить
             </Button>
           </div>
         </Flex>
@@ -126,15 +105,14 @@ export class EditProfile extends Component {
             name="basicInformation"
             layout="vertical"
             initialValues={{
-              name: name,
-              email: email,
-              username: userName,
-              dateOfBirth: dateOfBirth,
-              phoneNumber: phoneNumber,
-              website: website,
-              address: address,
-              city: city,
-              postcode: postcode,
+              name,
+              username,
+              email,
+              company: company.name,
+              phone,
+              website,
+              city: address.city,
+              street: address.street,
             }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
@@ -144,12 +122,12 @@ export class EditProfile extends Component {
                 <Row gutter={ROW_GUTTER}>
                   <Col xs={24} sm={24} md={12}>
                     <Form.Item
-                      label="Name"
+                      label="Имя"
                       name="name"
                       rules={[
                         {
                           required: true,
-                          message: "Please input your name!",
+                          message: "Пожалуйста введите имя!",
                         },
                       ]}
                     >
@@ -158,12 +136,12 @@ export class EditProfile extends Component {
                   </Col>
                   <Col xs={24} sm={24} md={12}>
                     <Form.Item
-                      label="Username"
+                      label="Юзернейм"
                       name="username"
                       rules={[
                         {
                           required: true,
-                          message: "Please input your username!",
+                          message: "Пожалуйста введите юзернейм!",
                         },
                       ]}
                     >
@@ -172,7 +150,7 @@ export class EditProfile extends Component {
                   </Col>
                   <Col xs={24} sm={24} md={12}>
                     <Form.Item
-                      label="Email"
+                      label="Электронная почта"
                       name="email"
                       rules={[
                         {
@@ -186,38 +164,33 @@ export class EditProfile extends Component {
                     </Form.Item>
                   </Col>
                   <Col xs={24} sm={24} md={12}>
-                    <Form.Item label="Date of Birth" name="dateOfBirth">
-                      <DatePicker className="w-100" />
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} sm={24} md={12}>
-                    <Form.Item label="Phone Number" name="phoneNumber">
+                    <Form.Item label="Компания" name="company">
                       <Input />
                     </Form.Item>
                   </Col>
                   <Col xs={24} sm={24} md={12}>
-                    <Form.Item label="Website" name="website">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} sm={24} md={24}>
-                    <Form.Item label="Address" name="address">
+                    <Form.Item label="Телефон" name="phone">
                       <Input />
                     </Form.Item>
                   </Col>
                   <Col xs={24} sm={24} md={12}>
-                    <Form.Item label="City" name="city">
+                    <Form.Item label="Сайт" name="website">
                       <Input />
                     </Form.Item>
                   </Col>
                   <Col xs={24} sm={24} md={12}>
-                    <Form.Item label="Post code" name="postcode">
+                    <Form.Item label="Город" name="city">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} sm={24} md={12}>
+                    <Form.Item label="Улица" name="street">
                       <Input />
                     </Form.Item>
                   </Col>
                 </Row>
                 <Button type="primary" htmlType="submit">
-                  Save Change
+                  Сохранить изменения
                 </Button>
               </Col>
             </Row>
@@ -232,4 +205,4 @@ const mapStateToProps = ({ user }) => {
   return { user };
 };
 
-export default connect(mapStateToProps)(EditProfile);
+export default connect(mapStateToProps)(withRouter(EditProfile));
