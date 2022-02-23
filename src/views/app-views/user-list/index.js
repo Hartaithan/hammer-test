@@ -44,7 +44,7 @@ export class UserList extends Component {
         render: (_, record) => (
           <div className="d-flex">
             <AvatarStatus
-              src={record.img || `/img/avatars/thumb-1.jpg`}
+              src={record.img || "/img/avatars/thumb-1.jpg"}
               name={record.name}
               subTitle={record.email}
             />

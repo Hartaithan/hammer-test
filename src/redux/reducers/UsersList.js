@@ -8,6 +8,9 @@ const initUser = {
 const user = (state = initUser, action) => {
   switch (action.type) {
     case SET_USERS:
+      [...action.users].forEach((item, index) => {
+        item.img = `/img/avatars/thumb-${index + 1}.jpg`;
+      });
       return { ...state, list: action.users, isLoading: false };
     case DELETE_USER:
       const modifiedList = [...state.list].filter(
