@@ -30,7 +30,7 @@ const setDefaultOpen = (key) => {
 };
 
 const SideNavContent = (props) => {
-	const { sideNavTheme, routeInfo, hideGroupTitle, localization, onMobileNavToggle } = props;
+	const { sideNavTheme, routeInfo, localization, onMobileNavToggle, collapsed } = props;
 	const isMobile = !utils.getBreakPoint(useBreakpoint()).includes('lg')
 	const closeMobileNav = () => {
 		if (isMobile) {
@@ -44,7 +44,7 @@ const SideNavContent = (props) => {
       style={{ height: "100%", borderRight: 0 }}
       defaultSelectedKeys={[routeInfo?.key]}
       defaultOpenKeys={setDefaultOpen(routeInfo?.key)}
-      className={hideGroupTitle ? "hide-group-title" : ""}
+      className={collapsed ? "hide-group-title" : ""}
     >
       {navigationConfig.map((menu) =>
         menu.submenu.length > 0 ? (

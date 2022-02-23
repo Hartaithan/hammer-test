@@ -17,6 +17,7 @@ export const SideNav = ({navCollapsed, sideNavTheme, routeInfo, hideGroupTitle, 
     >
       <Scrollbars autoHide>
         <MenuContent 
+          collapsed={navCollapsed}
           type={NAV_TYPE_SIDE} 
           {...props}
         />
