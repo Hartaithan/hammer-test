@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Card, Table, Tooltip, message, Button } from "antd";
 import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
+import Loading from "components/shared-components/Loading";
 import UserView from "./UserView";
 import AvatarStatus from "components/shared-components/AvatarStatus";
 import axios from "axios";
@@ -10,6 +11,7 @@ export class UserList extends Component {
     users: [],
     userProfileVisible: false,
     selectedUser: null,
+    isLoading: true,
   };
 
   componentDidMount() {
@@ -18,9 +20,13 @@ export class UserList extends Component {
       .then(({ data }) => {
         this.setState({
           users: data,
+          isLoading: false,
         });
       })
       .catch((error) => {
+        this.setState({
+          isLoading: false,
+        });
         console.error("getUsers error:", error);
       });
   }
@@ -134,6 +140,9 @@ export class UserList extends Component {
         ),
       },
     ];
+    if (this.state.isLoading) {
+      return <Loading />;
+    }
     return (
       <Card bodyStyle={{ padding: "0px" }}>
         <Table columns={tableColumns} dataSource={users} rowKey="id" />
