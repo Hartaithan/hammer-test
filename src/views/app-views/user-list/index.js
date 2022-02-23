@@ -4,37 +4,19 @@ import { EyeOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import Loading from "components/shared-components/Loading";
 import UserView from "./UserView";
 import AvatarStatus from "components/shared-components/AvatarStatus";
-import axios from "axios";
 import { withRouter } from "react-router-dom";
-import { setUser } from "redux/actions/User";
+import { setUsers, getUsers } from "redux/actions/UsersList";
 import { connect } from "react-redux";
 
 export class UserList extends Component {
   state = {
-    users: [],
     userProfileVisible: false,
     selectedUser: null,
-    isLoading: true,
   };
 
   componentDidMount() {
-    axios
-      .get("https://jsonplaceholder.typicode.com/users")
-      .then(({ data }) => {
-        data.forEach((item, index) => {
-          item.img = `/img/avatars/thumb-${index + 1}.jpg`;
-        });
-        this.setState({
-          users: data,
-          isLoading: false,
-        });
-      })
-      .catch((error) => {
-        this.setState({
-          isLoading: false,
-        });
-        console.error("getUsers error:", error);
-      });
+    const { getUsers } = this.props;
+    getUsers();
   }
 
   deleteUser = (userId) => {
@@ -59,9 +41,8 @@ export class UserList extends Component {
   };
 
   render() {
-    const { users, userProfileVisible, selectedUser } = this.state;
-
-    const { setUser } = this.props;
+    const { userProfileVisible, selectedUser } = this.state;
+    const { users, isLoading } = this.props;
 
     const tableColumns = [
       {
@@ -130,7 +111,6 @@ export class UserList extends Component {
                 icon={<EditOutlined />}
                 onClick={() => {
                   this.props.history.push("/app/clients/list/edit");
-                  setUser(elm);
                 }}
                 size="small"
               />
@@ -160,7 +140,7 @@ export class UserList extends Component {
         ),
       },
     ];
-    if (this.state.isLoading) {
+    if (isLoading) {
       return <Loading />;
     }
     return (
@@ -178,8 +158,16 @@ export class UserList extends Component {
   }
 }
 
-const mapDispatchToProps = {
-  setUser,
+const mapStateToProps = ({ users }) => {
+  return { users: users.list, isLoading: users.isLoading };
 };
 
-export default connect(null, mapDispatchToProps)(withRouter(UserList));
+const mapDispatchToProps = {
+  setUsers,
+  getUsers,
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(UserList));

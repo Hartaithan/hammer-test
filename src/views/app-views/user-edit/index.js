@@ -15,23 +15,30 @@ import { ROW_GUTTER } from "constants/ThemeConstant";
 import Flex from "components/shared-components/Flex";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
+import { getUsers } from "redux/actions";
 
 export class EditProfile extends Component {
   avatarEndpoint = "https://www.mocky.io/v2/5cc8019d300000980a055e76";
 
-  user = this.props.user;
+  users = this.props.users;
 
   state = {
-    id: this.user?.id || "",
-    name: this.user?.name || "",
-    username: this.user?.username || "",
-    email: this.user?.email || "",
-    address: this.user?.address || "",
-    phone: this.user?.phone || "",
-    website: this.user?.website || "",
-    company: this.user?.company || "",
-    img: this.user.img || "",
+    id: this.users?.id || "",
+    name: this.users?.name || "",
+    username: this.users?.username || "",
+    email: this.users?.email || "",
+    address: this.users?.address || "",
+    phone: this.users?.phone || "",
+    website: this.users?.website || "",
+    company: this.users?.company || "",
+    img: this.users.img || "",
   };
+
+  componentDidMount() {
+    if (this.length === 0) {
+      getUsers();
+    }
+  }
 
   getBase64(img, callback) {
     const reader = new FileReader();
@@ -201,8 +208,15 @@ export class EditProfile extends Component {
   }
 }
 
-const mapStateToProps = ({ user }) => {
-  return { user };
+const mapStateToProps = ({ users }) => {
+  return { users };
 };
 
-export default connect(mapStateToProps)(withRouter(EditProfile));
+const mapDispatchToProps = {
+  getUsers,
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(EditProfile));
