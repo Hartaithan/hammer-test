@@ -1,17 +1,29 @@
 import React, { Component } from "react";
-import { Card, Table, Tag, Tooltip, message, Button } from "antd";
+import { Card, Table, Tooltip, message, Button } from "antd";
 import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
-import moment from "moment";
 import UserView from "./UserView";
 import AvatarStatus from "components/shared-components/AvatarStatus";
-import userData from "assets/data/user-list.data.json";
+import axios from "axios";
 
 export class UserList extends Component {
   state = {
-    users: userData,
+    users: [],
     userProfileVisible: false,
     selectedUser: null,
   };
+
+  componentDidMount() {
+    axios
+      .get("https://jsonplaceholder.typicode.com/users")
+      .then(({ data }) => {
+        this.setState({
+          users: data,
+        });
+      })
+      .catch((error) => {
+        console.error("getUsers error:", error);
+      });
+  }
 
   deleteUser = (userId) => {
     this.setState({
@@ -39,7 +51,7 @@ export class UserList extends Component {
 
     const tableColumns = [
       {
-        title: "User",
+        title: "Пользователь",
         dataIndex: "name",
         render: (_, record) => (
           <div className="d-flex">
@@ -59,34 +71,37 @@ export class UserList extends Component {
         },
       },
       {
-        title: "Role",
-        dataIndex: "role",
+        title: "Электронная почта",
+        dataIndex: "email",
         sorter: {
-          compare: (a, b) => a.role.length - b.role.length,
+          compare: (a, b) => {
+            a = a.name.toLowerCase();
+            b = b.name.toLowerCase();
+            return a > b ? -1 : b > a ? 1 : 0;
+          },
         },
       },
       {
-        title: "Last online",
-        dataIndex: "lastOnline",
-        render: (date) => (
-          <span>{moment.unix(date).format("MM/DD/YYYY")} </span>
-        ),
-        sorter: (a, b) =>
-          moment(a.lastOnline).unix() - moment(b.lastOnline).unix(),
+        title: "Телефон",
+        dataIndex: "phone",
+        sorter: {
+          compare: (a, b) => {
+            a = a.name.toLowerCase();
+            b = b.name.toLowerCase();
+            return a > b ? -1 : b > a ? 1 : 0;
+          },
+        },
       },
       {
-        title: "Status",
-        dataIndex: "status",
-        render: (status) => (
-          <Tag
-            className="text-capitalize"
-            color={status === "active" ? "cyan" : "red"}
-          >
-            {status}
-          </Tag>
-        ),
+        title: "Адрес",
+        dataIndex: "address",
+        render: ({ city, street, suite }) => `${city}, ${street}, ${suite}`,
         sorter: {
-          compare: (a, b) => a.status.length - b.status.length,
+          compare: (a, b) => {
+            a = a.name.toLowerCase();
+            b = b.name.toLowerCase();
+            return a > b ? -1 : b > a ? 1 : 0;
+          },
         },
       },
       {
