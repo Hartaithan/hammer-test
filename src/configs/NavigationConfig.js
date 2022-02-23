@@ -24,7 +24,7 @@ const mainNavTree = [
     submenu: [
       {
         key: "dashboards-default",
-        path: `${APP_PREFIX_PATH}/dashboards/default`,
+        path: `${APP_PREFIX_PATH}/dashboard`,
         title: "sidenav.main.dashboard",
         icon: DashboardOutlined,
         breadcrumb: false,
