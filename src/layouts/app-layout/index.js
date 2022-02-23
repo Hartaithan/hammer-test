@@ -51,7 +51,7 @@ export const AppLayout = ({ navCollapsed, navType, location }) => {
       <Layout className="app-container">
         {(isNavSide && !isMobile) ? <SideNav routeInfo={currentRouteInfo}/> : null }
         <Layout className="app-layout" style={{paddingLeft: getLayoutGutter()}}>
-          <div className={`app-content ${isNavTop ? 'layout-top-nav' : ''}`}>
+          <div className={`app-content d-flex ${isNavTop ? 'layout-top-nav' : ''}`}>
             <PageHeader display={currentRouteInfo?.breadcrumb} title={currentRouteInfo?.title} />
             <Content>
               <AppViews />

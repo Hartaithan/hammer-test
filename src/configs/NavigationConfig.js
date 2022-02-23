@@ -11,6 +11,7 @@ import {
   SettingOutlined,
   MobileOutlined,
   FileTextOutlined,
+  BorderOuterOutlined,
 } from "@ant-design/icons";
 import { APP_PREFIX_PATH } from "configs/AppConfig";
 
@@ -158,6 +159,14 @@ const mainNavTree = [
         path: `${APP_PREFIX_PATH}/mailing`,
         title: "sidenav.main.mailing",
         icon: MailOutlined,
+        breadcrumb: false,
+        submenu: [],
+      },
+      {
+        key: "planner",
+        path: `${APP_PREFIX_PATH}/planner`,
+        title: "sidenav.main.planner",
+        icon: BorderOuterOutlined,
         breadcrumb: false,
         submenu: [],
       },
