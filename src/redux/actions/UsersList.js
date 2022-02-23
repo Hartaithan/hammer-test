@@ -1,4 +1,4 @@
-import { GET_USERS, SET_USERS } from "redux/constants/UsersList";
+import { DELETE_USER, GET_USERS, SET_USERS } from "redux/constants/UsersList";
 
 export function setUsers(users) {
   return {
@@ -10,5 +10,12 @@ export function setUsers(users) {
 export function getUsers() {
   return {
     type: GET_USERS,
+  };
+}
+
+export function deleteUser(id) {
+  return {
+    type: DELETE_USER,
+    id,
   };
 }

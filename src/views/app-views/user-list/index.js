@@ -5,7 +5,7 @@ import Loading from "components/shared-components/Loading";
 import UserView from "./UserView";
 import AvatarStatus from "components/shared-components/AvatarStatus";
 import { withRouter } from "react-router-dom";
-import { setUsers, getUsers } from "redux/actions/UsersList";
+import { setUsers, getUsers, deleteUser } from "redux/actions/UsersList";
 import { connect } from "react-redux";
 
 export class UserList extends Component {
@@ -18,13 +18,6 @@ export class UserList extends Component {
     const { getUsers } = this.props;
     getUsers();
   }
-
-  deleteUser = (userId) => {
-    this.setState({
-      users: this.state.users.filter((item) => item.id !== userId),
-    });
-    message.success({ content: `Deleted user ${userId}`, duration: 2 });
-  };
 
   showUserProfile = (userInfo) => {
     this.setState({
@@ -42,7 +35,7 @@ export class UserList extends Component {
 
   render() {
     const { userProfileVisible, selectedUser } = this.state;
-    const { users, isLoading } = this.props;
+    const { users, isLoading, deleteUser } = this.props;
 
     const tableColumns = [
       {
@@ -131,7 +124,11 @@ export class UserList extends Component {
                 danger
                 icon={<DeleteOutlined />}
                 onClick={() => {
-                  this.deleteUser(elm.id);
+                  deleteUser(elm.id);
+                  message.success({
+                    content: `Deleted user ${elm.id}`,
+                    duration: 2,
+                  });
                 }}
                 size="small"
               />
@@ -165,6 +162,7 @@ const mapStateToProps = ({ users }) => {
 const mapDispatchToProps = {
   setUsers,
   getUsers,
+  deleteUser,
 };
 
 export default connect(

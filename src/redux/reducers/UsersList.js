@@ -1,4 +1,4 @@
-import { SET_USERS } from "redux/constants/UsersList";
+import { DELETE_USER, SET_USERS } from "redux/constants/UsersList";
 
 const initUser = {
   list: [],
@@ -9,6 +9,11 @@ const user = (state = initUser, action) => {
   switch (action.type) {
     case SET_USERS:
       return { ...state, list: action.users, isLoading: false };
+    case DELETE_USER:
+      const modifiedList = [...state.list].filter(
+        (item) => item.id !== action.id
+      );
+      return { ...state, list: modifiedList };
     default:
       return state;
   }
