@@ -1,11 +1,12 @@
 import React from "react";
-import { useDrag, useDrop } from "react-dnd";
+import { useDrop } from "react-dnd";
 import update from "immutability-helper";
 import Sidebar from "./Sidebar";
 import Board from "./Board";
 
-const ItemTypes = {
+export const ItemTypes = {
   ITEM: "item",
+  SIDEBAR_ITEM: "sidebarItem",
 };
 
 export const Planner = () => {
@@ -14,11 +15,12 @@ export const Planner = () => {
     b: { top: 180, left: 20, title: "Drag me too" },
   });
   const moveBox = React.useCallback(
-    (id, left, top) => {
+    (id, left, top, title) => {
+      console.log(id);
       setBoxes(
         update(boxes, {
           [id]: {
-            $merge: { left, top },
+            $merge: { left, top, title },
           },
         })
       );
@@ -27,12 +29,18 @@ export const Planner = () => {
   );
   const [, drop] = useDrop(
     () => ({
-      accept: ItemTypes.ITEM,
+      accept: [ItemTypes.ITEM, ItemTypes.SIDEBAR_ITEM],
       drop(item, monitor) {
+        if (!boxes[item.id]) {
+          setBoxes({
+            ...boxes,
+            [item.id]: { top: item.top, left: item.left, title: item.title },
+          });
+        }
         const delta = monitor.getDifferenceFromInitialOffset();
         const left = Math.round(item.left + delta.x);
         const top = Math.round(item.top + delta.y);
-        moveBox(item.id, left, top);
+        moveBox(item.id, left, top, item.title);
         return undefined;
       },
     }),
