@@ -1,47 +1,11 @@
-/* eslint-disable jsx-a11y/aria-role */
 import React from "react";
-import { Card } from "antd";
 import { useDrag, useDrop } from "react-dnd";
 import update from "immutability-helper";
-
-const boxStyles = {
-  position: "absolute",
-  border: "1px dashed gray",
-  backgroundColor: "white",
-  padding: "0.5rem 1rem",
-  cursor: "move",
-};
-
-const containerStyles = {
-  width: "100%",
-  height: "100%",
-  border: "1px solid black",
-  position: "relative",
-};
+import Sidebar from "./Sidebar";
+import Board from "./Board";
 
 const ItemTypes = {
-  BOX: "box",
-};
-
-const Box = ({ id, left, top, hideSourceOnDrag, children }) => {
-  const [{ isDragging }, drag] = useDrag(
-    () => ({
-      type: ItemTypes.BOX,
-      item: { id, left, top },
-      collect: (monitor) => ({
-        isDragging: monitor.isDragging(),
-      }),
-    }),
-    [id, left, top]
-  );
-  if (isDragging && hideSourceOnDrag) {
-    return <div ref={drag} />;
-  }
-  return (
-    <div ref={drag} style={{ ...boxStyles, left, top }} role="Box">
-      {children}
-    </div>
-  );
+  ITEM: "item",
 };
 
 export const Planner = () => {
@@ -63,7 +27,7 @@ export const Planner = () => {
   );
   const [, drop] = useDrop(
     () => ({
-      accept: ItemTypes.BOX,
+      accept: ItemTypes.ITEM,
       drop(item, monitor) {
         const delta = monitor.getDifferenceFromInitialOffset();
         const left = Math.round(item.left + delta.x);
@@ -76,33 +40,8 @@ export const Planner = () => {
   );
   return (
     <div className="d-flex h-100 w-100">
-      <Card
-        bodyStyle={{ padding: "5", height: "100%", width: "100%" }}
-        style={{ width: "15%" }}
-      >
-        asdasdasd
-      </Card>
-      <Card
-        bodyStyle={{ padding: "5", height: "100%", width: "100%" }}
-        style={{ width: "85%", marginLeft: "20px" }}
-      >
-        <div ref={drop} style={containerStyles}>
-          {Object.keys(boxes).map((key) => {
-            const { left, top, title } = boxes[key];
-            return (
-              <Box
-                key={key}
-                id={key}
-                left={left}
-                top={top}
-                hideSourceOnDrag={true}
-              >
-                {title}
-              </Box>
-            );
-          })}
-        </div>
-      </Card>
+      <Sidebar />
+      <Board drop={drop} boxes={boxes} />
     </div>
   );
 };
