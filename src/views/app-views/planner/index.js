@@ -10,7 +10,8 @@ export const ItemTypes = {
 };
 
 export const Planner = () => {
-  const [boxes, setBoxes] = React.useState({});
+  const getBoxes = JSON.parse(localStorage.getItem("boxes"));
+  const [boxes, setBoxes] = React.useState(getBoxes ? getBoxes : {});
   const moveBox = React.useCallback(
     (id, left, top, title) => {
       setBoxes(
@@ -30,7 +31,6 @@ export const Planner = () => {
         const delta = monitor.getDifferenceFromInitialOffset();
         const left = Math.round(item.left + delta.x);
         const top = Math.round(item.top + delta.y);
-        console.log("item.location", item.location);
         if (item.location === "board") {
           moveBox(item.id, left, top, item.title);
         } else {
@@ -40,8 +40,8 @@ export const Planner = () => {
           const newBoxes = { ...boxes };
           newBoxes[index] = { top, left, title: item.title, location: "board" };
           setBoxes(newBoxes);
+          localStorage.setItem("boxes", JSON.stringify(newBoxes));
         }
-        // localStorage.setItem("boxes", JSON.stringify(boxes));
         return undefined;
       },
     }),
