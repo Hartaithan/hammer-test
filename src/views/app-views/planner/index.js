@@ -14,13 +14,13 @@ export const Planner = () => {
   const [boxes, setBoxes] = React.useState(getBoxes ? getBoxes : {});
   const moveBox = React.useCallback(
     (id, left, top, title) => {
-      setBoxes(
-        update(boxes, {
-          [id]: {
-            $merge: { left, top, title },
-          },
-        })
-      );
+      const editedBoxes = update(boxes, {
+        [id]: {
+          $merge: { left, top, title },
+        },
+      });
+      setBoxes(editedBoxes);
+      localStorage.setItem("boxes", JSON.stringify(editedBoxes));
     },
     [boxes, setBoxes]
   );
@@ -47,9 +47,35 @@ export const Planner = () => {
     }),
     [moveBox]
   );
+
+  function saveBoxes() {
+    var a = document.createElement("a");
+    var file = new Blob([JSON.stringify(boxes)], { type: "text/plain" });
+    a.href = URL.createObjectURL(file);
+    a.download = "boxes.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  function eraseBoxes() {
+    setBoxes({});
+    localStorage.removeItem("boxes");
+  }
+
+  async function uploadBoxes(file) {
+    const data = await file.text();
+    setBoxes(JSON.parse(data));
+    localStorage.setItem("boxes", data);
+  }
+
   return (
     <div className="d-flex h-100 w-100">
-      <Sidebar />
+      <Sidebar
+        saveBoxes={saveBoxes}
+        uploadBoxes={uploadBoxes}
+        eraseBoxes={eraseBoxes}
+      />
       <Board drop={drop} boxes={boxes} />
     </div>
   );
