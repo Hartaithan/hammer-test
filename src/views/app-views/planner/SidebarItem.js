@@ -2,15 +2,28 @@ import React from "react";
 import { useDrag } from "react-dnd";
 import { ItemTypes } from ".";
 
-const SideBarItem = ({ id, left, top, title, hideSourceOnDrag, children }) => {
+const sidebarItemStyles = {
+  border: "1px dashed gray",
+  backgroundColor: "white",
+  padding: "0.5rem 1rem",
+  cursor: "move",
+  marginBottom: "8px",
+  textAlign: "center",
+};
+
+const SideBarItem = ({
+  id,
+  left,
+  top,
+  title,
+  location,
+  hideSourceOnDrag,
+  children,
+}) => {
   const [{ isDragging, opacity }, drag] = useDrag(
     () => ({
       type: ItemTypes.ITEM,
-      item: { id, left, top, title },
-      collect: (monitor) => ({
-        opacity: monitor.isDragging() ? 0.4 : 1,
-        isDragging: monitor.isDragging(),
-      }),
+      item: { left, top, title, location },
     }),
     [id, left, top]
   );
@@ -19,7 +32,11 @@ const SideBarItem = ({ id, left, top, title, hideSourceOnDrag, children }) => {
   }
 
   return (
-    <div className="sideBarItem" ref={drag} style={{ opacity }}>
+    <div
+      className="sideBarItem"
+      ref={drag}
+      style={{ ...sidebarItemStyles, opacity }}
+    >
       {children}
     </div>
   );

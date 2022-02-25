@@ -17,7 +17,7 @@ const Board = ({ drop, boxes }) => {
     >
       <div ref={drop} style={boardStyles}>
         {Object.keys(boxes).map((key) => {
-          const { left, top, title } = boxes[key];
+          const { left, top, title, location } = boxes[key];
           return (
             <Item
               key={key}
@@ -25,6 +25,7 @@ const Board = ({ drop, boxes }) => {
               left={left}
               top={top}
               title={title}
+              location={location}
               hideSourceOnDrag={true}
             >
               {title}

@@ -9,11 +9,19 @@ const itemStyles = {
   cursor: "move",
 };
 
-const Item = ({ id, left, top, title, hideSourceOnDrag, children }) => {
+const Item = ({
+  id,
+  left,
+  top,
+  title,
+  location,
+  hideSourceOnDrag,
+  children,
+}) => {
   const [{ isDragging }, drag] = useDrag(
     () => ({
       type: ItemTypes.ITEM,
-      item: { id, left, top, title },
+      item: { id, left, top, title, location },
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
       }),
